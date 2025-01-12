@@ -1,0 +1,198 @@
+/* General Styles */
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #ECDEB6;
+    color: #333;
+}
+
+.pos-wrapper {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 25px;
+    background: #ECEADD;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.pos-wrapper:hover {
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+}
+
+.pos-wrapper h1 {
+    text-align: center;
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+/* Two-Table Layout */
+.pos-container {
+    display: flex;
+    gap: 20px;
+}
+
+.payment-form {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    transition: background 0.3s ease;
+}
+
+.payment-form:hover {
+    background-color: #f2f7fc;
+}
+
+.transactions-summary {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    transition: background 0.3s ease;
+}
+
+.transactions-summary:hover {
+    background-color: #f2f7fc;
+}
+
+.transactions-summary h3 {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #444;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 15px;
+    color: #555;
+    border-bottom: 1px solid #ddd;
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+/* Form Group */
+.form-group {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 16px;
+    color: #555;
+}
+
+.product-size,
+.quantity {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: border 0.3s ease;
+}
+
+.product-size:focus,
+.quantity:focus {
+    border-color: #007bb5;
+    box-shadow: 0 0 5px rgba(0, 123, 181, 0.2);
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+button {
+    flex: 1;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#addToOrderBtn {
+    background: #ffc107;
+    color: #fff;
+}
+
+#addToOrderBtn:hover {
+    background: #e6ac00;
+}
+
+#orderBtn {
+    background: #28a745;
+    color: #fff;
+}
+
+#orderBtn:hover {
+    background: #218838;
+}
+
+.cancel-btn {
+    background: #dc3545;
+    color: #fff;
+}
+
+.cancel-btn:hover {
+    background: #c82333;
+}
+
+/* Transactions Summary */
+.transactions-summary #transactionsList {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+#totalAmount {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    text-align: right;
+}
+.delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+.delete-btn:hover {
+    background-color: darkred;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .pos-container {
+        flex-direction: column;
+    }
+
+    button {
+        padding: 10px;
+        font-size: 14px;
+    }
+}

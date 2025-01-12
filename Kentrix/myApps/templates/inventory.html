@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Total Sales</title>
+    <link rel="stylesheet" href="{% static 'CSS/Admin.css' %}">
+    <script rel="javascript" href="{% static 'JAVASCRIPT/search.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+
+</head>
+<body>
+<div class="main-wrapper">
+    <div class="header">
+        <img src="{% static 'LOGO/logo.png' %}" alt="Food Hub Logo" class="logo">
+        <div class="nav-links">
+            <a href="{% url 'admin_graph' %}">HOME</a>
+            <a href="{% url 'about' %}">ABOUT</a>
+        </div>
+    <div class="sidebar">
+        <ul>
+        <img src="{% static 'LOGO/admin.png' %}" alt="admin Logo" class="logo">
+        <div class="logo-container">
+            <span id="current-date-time"></span>
+        </div>
+        <li><a href="{% url 'admin_graph' %}">DASHBOARD</a></li>
+        <li><a href="{% url 'inventory' %}">INVENTORY</a></li>
+        <li><a href="{% url 'emp_records' %}">EMPLOYEE</a></li>
+        <li><a href="{% url 'report_list' %}">REPORTS</a></li>
+        <li><a href="{% url 'log_in' %}" onclick="return confirmLogOut();" id="logout-link">LOGOUT</a></li>
+        </ul>
+    </div>
+    </div>
+    <h4>INVENTORY</h4>
+    <div class="container">
+        <div class="item-info">
+            
+            <h2>SUPPLIER INFO</h2>
+            <div class="form-group row">
+                <div class="col-md-5">
+                    <label for="supplier_name">Supplier Name</label>
+                    <input type="text" class="form-control" id="supplier_name" name="supplier_name" value="{{ supplier.name }}" required>
+                </div>
+                <div class="col-md-5">
+                    <label for="contact_name">Contact Name</label>
+                    <input type="text" class="form-control" id="contact_name" name="contact_name" value="{{ supplier.contact_name }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-5">
+                    <label for="contact_number">Contact Number</label>
+                    <input type="text" class="form-control" id="contact_number" name="contact_number" value="{{ supplier.contact_number }}">
+                </div>
+                <div class="col-md-5">
+                    <label for="address">Address</label>
+                    <input type="text" class="form-control" id="address" name="address" value="{{ supplier.address }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-5">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ supplier.email }}">
+                </div>
+            </div>
+        <h2>ITEM INFO</h2>
+            <div class="form-group row">
+                <div class="col-md-5">
+                    <label for="item_name">Item Name</label>
+                    <input type="text" class="form-control" id="item_name" name="item_name" value="{{ item.name }}" required>
+                </div>
+                <div class="col-md-5">
+                    <label for="category">Category</label>
+                    <input type="text" class="form-control" id="category" name="category" value="{{ item.category }}" required>
+                </div>
+            
+            <div class="form-group row">
+                <div class="col-md-5">
+                    <label for="price">Price</label>
+                    <input type="number" class="form-control" id="price" name="price" value="{{ item.price }}" required>
+                </div>
+                <div class="col-md-5">
+                    <label for="expiration_date">Expiration Date</label>
+                    <input type="date" class="form-control" id="expiration_date" name="expiration_date" 
+                               value="{{ item.expiration_date|date:'Y-m-d' }}" required>
+                </div>
+            </div>
+        </div>
+        <div class="button-container">
+            <button type="submit" class="btn-primary" id="submit-btn">Submit</button>
+            <button class="btn-secondary" onclick="window.location.href='{% url 'view_supplier' %}'">View Supplier Records</button>
+            <button class="btn-secondary" onclick="window.location.href='{% url 'view_item' %}'">View Item Records</button>
+        </div>
+    </div>
+    
+
+<script>
+    function confirmLogOut() {
+        return confirm("Are you sure you want to logout?");
+      }
+    document.getElementById('submit-btn').addEventListener('click', function() {
+        const itemName = document.getElementById('item_name').value;
+        const category = document.getElementById('category').value;
+        const price = document.getElementById('price').value;
+        const expirationDate = document.getElementById('expiration_date').value;
+        const supplierName = document.getElementById('supplier_name').value;
+        const contactName = document.getElementById('contact_name').value;
+        const contactNumber = document.getElementById('contact_number').value;
+        const address = document.getElementById('address').value;
+        const email = document.getElementById('email').value;
+    
+        // Create an object to hold the data
+        const itemData = {
+            item_name: itemName,
+            category: category,
+            price: parseFloat(price),  // Ensure price is a float
+            expiration_date: expirationDate,
+            supplier_name: supplierName,
+            contact_name: contactName,
+            contact_number: contactNumber,
+            address: address,
+            email: email
+        };
+    
+        // Send the data using fetch
+        fetch('{% url 'save_item' %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+            },
+            body: JSON.stringify(itemData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);  // Show success message
+                
+                // Clear all input fields
+                document.getElementById('item_name').value = '';
+                document.getElementById('category').value = '';
+                document.getElementById('price').value = '';
+                document.getElementById('expiration_date').value = '';
+                document.getElementById('supplier_name').value = '';
+                document.getElementById('contact_name').value = '';
+                document.getElementById('contact_number').value = '';
+                document.getElementById('address').value = '';
+                document.getElementById('email').value = '';
+            } else {
+                alert('Error saving item. Please try again: ' + data.error);  // Show error message
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });   
+
+const dateTimeElement = document.getElementById('current-date-time');
+
+    function formatAMPM(date) {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; 
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    const strTime = `${hours}:${minutes}${ampm}`;
+    return strTime;
+    }
+
+    function updateDateTime() {
+    const now = new Date();
+    const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+    const time = formatAMPM(now);
+    const dateTimeHTML = `${date} - ${time}`;
+    dateTimeElement.innerHTML = dateTimeHTML;
+
+    document.getElementById("date").value = dateTimeHTML;
+    
+    }
+    updateDateTime();
+    document.addEventListener('DOMContentLoaded', function() {
+        window.scrollTo(0, document.querySelector('.search-bar').offsetTop);
+    });
+</script>
+</body>
+</html>

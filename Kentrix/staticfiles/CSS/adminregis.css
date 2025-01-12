@@ -1,0 +1,135 @@
+/* General form styling */
+body {
+    font-family: 'Playfair Display', serif;
+    background-color: #f5dfc0;
+    margin: 0;
+    padding: 0;
+  }
+
+.form-wrapper {
+width: 200%; /* Full width for responsiveness */
+max-width: 600px; /* Base maximum width for desktop */
+background-color: #f5dfc0; /* Background color */
+padding: 20px; /* Increased padding */
+border-radius: 10px; /* Rounded edges */
+box-sizing: border-box; /* Ensures padding is included in total width */
+margin: 0 auto; /* Center the form wrapper */
+}
+
+/* Heading Style */
+.form-wrapper h2 {
+text-align: center; /* Centered heading */
+margin-bottom: 8px; /* Reduced margin */
+font-size: 18px; /* Font size for heading */
+font-weight: bold; /* Bold heading */
+}
+
+/* Form Grid Layout */
+.form-grid {
+display: grid; /* Use grid layout */
+grid-template-columns: 1fr; /* Single column for smaller screens */
+gap: 10px; /* Slightly increased gap */
+}
+
+/* Form Group Styling */
+.form-group {
+display: flex; /* Flex display for form groups */
+flex-direction: column; /* Stack elements vertically */
+}
+
+/* Label Style */
+.form-group label {
+font-size: 12px; /* Reduced font size for labels */
+margin-bottom: 3px; /* Reduced margin */
+font-weight: bold; /* Bold labels */
+}
+
+/* Phone Number Input Style */
+.form-group input[type="tel"] {
+padding: 10px; /* Padding for the input field */
+border: 1px solid #ccc; /* Light gray border */
+border-radius: 5px; /* Rounded input fields */
+font-size: 12px; /* Font size for input fields */
+font-weight: bold; /* Bold text for input */
+width: 100%; /* Full width for the input field */
+}
+
+/* Placeholder for Phone Number Input */
+.form-group input[type="tel"]::placeholder {
+color: #aaa; /* Light gray for placeholder text */
+font-style: font-family; /* Italic style for placeholder */
+}
+
+/* Ensure the phone number field prompts for +639 */
+/* Input Field Style */
+.form-group input {
+padding: 10px; /* Increased padding for input fields */
+border: 1px solid #ccc; /* Light gray border */
+border-radius: 5px; /* Rounded input fields */
+font-size: 12px; /* Reduced font size for input fields */
+font-weight: bold; /* Bold input text */
+width: 100%; /* Full width for input fields */
+}
+
+input[type="submit"], .submit-btn {
+background-color: #007bff;
+color: white;
+padding: 10px 16px; /* Increased padding */
+border: none;
+border-radius: 5px; /* Rounded edges for buttons */
+cursor: pointer;
+font-size: 14px; /* Smaller font size */
+font-weight: bold; /* Bold buttons */
+margin-top: 10px; /* Reduced margin */
+width: 90%; /* Full width for buttons */
+box-shadow: none;
+}
+
+input[type="submit"]:hover, .submit-btn:hover {
+background-color: #0056b3; /* Darker color on hover */
+}
+
+.button-container {
+text-align: center;
+margin-top: 10px; /* Reduced margin */
+}
+
+.btn-secondary {
+background-color: #007bff;
+color: white;
+border: none;
+padding: 8px 12px; /* Increased padding */
+font-size: 12px; /* Smaller font size */
+font-weight: bold; /* Bold secondary buttons */
+cursor: pointer;
+margin-left: 5px; /* Reduced margin */
+border-radius: 5px; /* Rounded edges for buttons */
+}
+
+.btn-secondary:hover {
+background-color: #0056b3; /* Darker color on hover */
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+.form-wrapper {
+    width: 300%; /* Full width for mobile screens */
+    padding: 15px; /* Adjust padding for mobile */
+}
+}
+
+/* Tablet-specific styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+.form-wrapper {
+    max-width: 800px; /* Increased maximum width for tablets */
+    padding: 20px; /* Maintain padding */
+}
+}
+
+/* Desktop-specific styles */
+@media (min-width: 1025px) {
+.form-wrapper {
+    max-width: 900px; /* Even wider for desktops */
+    padding: 30px; /* More padding for desktop view */
+}
+}

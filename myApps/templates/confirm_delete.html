@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Records</title>
+    <link rel="stylesheet" href="{% static 'CSS/emp_records.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="{% static 'JAVSCRIPT/order.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+    <style>
+      .action-icons {
+        display: flex; /* Use flexbox to align items side by side */
+        gap: 5px; /* Optional: add space between the icons */
+        align-items: center; /* Vertically center the icons */
+    }
+
+    .action-iconss {
+      width: 40px; /* Set the size of the icons */
+      height: auto; /* Maintain aspect ratio */
+      cursor: pointer; /* Change cursor to pointer on hover */
+  }
+    
+    .action-icon {
+        width: 26px; /* Set the size of the icons */
+        height: auto; /* Maintain aspect ratio */
+        cursor: pointer; /* Change cursor to pointer on hover */
+    }
+  </style>
+
+  </head>
+<body>
+    <h2>Are you sure you want to delete this supplier?</h2>
+    <p>Supplier Name: {{ supplier.supplier_name }}</p>
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit">Yes, Delete</button>
+    </form>
+    <a href="{% url 'suppliers' %}">Cancel</a>
+
+<script>
+
+  const dateTimeElement = document.getElementById('current-date-time');
+
+    function formatAMPM(date) {
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; 
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      const strTime = `${hours}:${minutes}${ampm}`;
+      return strTime;
+    }
+
+    function updateDateTime() {
+      const now = new Date();
+      const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+      const time = formatAMPM(now);
+      const dateTimeHTML = `${date} - ${time}`;
+      dateTimeElement.innerHTML = dateTimeHTML;
+
+      document.getElementById("date").value = dateTimeHTML;
+    }
+    updateDateTime();
+    document.addEventListener('DOMContentLoaded', function() {
+      window.scrollTo(0, document.getElementById('Monthly Sales Bar Graph').offsetTop);
+    });
+</script>
+</body>
+</html>

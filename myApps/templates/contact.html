@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <!-- Link to the static CSS file -->
+    <link rel="stylesheet" href="{% static 'CSS/contact.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <!-- Link to the static logo image -->
+            <img src="{% static 'LOGO/logo.png' %}" alt="Logo" class="logo">
+            <div id="date-time" class="date-time"></div> <!-- Real-time date and time -->
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{% url 'index' %}" class="sidebar-link">Home</a>
+            <a href="{% url 'about' %}" class="sidebar-link">About Us</a>
+            <a href="{% url 'home' %}" class="sidebar-link">Log In</a>
+        </nav>
+    </div>
+
+    <!-- Hamburger Icon -->
+    <div class="hamburger" id="hamburger" onclick="toggleSidebar()">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+
+    <div class="image-container" style="background-image: url('{% static 'LOGO/bg_ou.jpg' %}');"></div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+        <header>
+            <h1>Contact Us</h1>
+        </header>
+
+        <section class="contact-container">
+            <div class="contact-info">
+                <h2>Get in Touch</h2>
+                <p>
+                    We would love to hear from you! Whether you have a question, need support, or just want to say hello, feel free to reach out to us using the contact form below, or via any of the following methods.
+                </p>
+                <h3>Our Office</h3>
+                <address>
+                    <p><strong>I/O FoodHub</strong></p>
+                    <p>QG6P+PFH, Dalaguete, Cebu</p>
+                    <p>Dalaguete, Cebu, 6022</p>
+                    <p>Phone: +63 915-8854-260</p>
+                </address>
+                <h3>Social Media</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/p/IO-Food-Hub-100093428663911/" class="social-icon">
+                        <img src="{% static 'LOGO/facebook-icon.png' %}" alt="Facebook" class="icon">
+                    </a>
+                    <a href="https://www.instagram.com/iofoodhub?igsh=dzA4cGw2dDlydmll&fbclid=IwY2xjawGtepVleHRuA2FlbQIxMAABHRePbYEPOSJiEEUSIplEI_0VCMUkDczbDWredlwslbXjHo8YqkokQ4Qgzw_aem_KuovcCHYNjnly5ZHOk6xkw" target="_blank" class="social-icon">
+                        <img src="{% static 'LOGO/instagram-icon.jpg' %}" alt="Instagram" class="icon">
+                    </a>
+                </div>
+            </div>
+
+            <div class="contact-form">
+                <h2>Feedback</h2>
+                <!-- Django form submission should be handled with Django's form handling -->
+                <form action="{% url 'submit_contact_form' %}" method="POST">
+                    {% csrf_token %}
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="6" required></textarea>
+
+                    <button type="submit" class="btn-primary">Submit</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="map">
+            <h2>Find Us</h2>
+            <div class="map-container">
+                <!-- Embed Google Map -->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3932.0502207765753!2d123.5362378!3d9.7618137!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33abb9fc4d89915d%3A0x9f2c1258252d9f17!2sI%2FO%20Food%20Hub!5e0!3m2!1sen!2sph!4v1732351668194!5m2!1sen!2sph" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; {{ current_year }} I/O FoodHub. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Function to update real-time date and time
+        function updateDateTime() {
+            var now = new Date();
+            var hours = now.getHours().toString().padStart(2, '0');
+            var minutes = now.getMinutes().toString().padStart(2, '0');
+            var seconds = now.getSeconds().toString().padStart(2, '0');
+            var day = now.getDate().toString().padStart(2, '0');
+            var month = (now.getMonth() + 1).toString().padStart(2, '0'); // months are 0-based
+            var year = now.getFullYear();
+
+            var timeString = hours + ":" + minutes + ":" + seconds;
+            var dateString = day + "/" + month + "/" + year;
+
+            // Combine the date and time into one string
+            document.getElementById("date-time").textContent = dateString + " | " + timeString;
+        }
+        updateDateTime();
+
+        // Update the date and time every second
+        setInterval(updateDateTime, 1000);
+
+        // Toggle the sidebar visibility when hamburger icon is clicked
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+    </script>
+
+</body>
+</html>

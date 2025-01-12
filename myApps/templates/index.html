@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Homepage</title>
+    <!-- Using Django static for the CSS file -->
+    <link rel="stylesheet" href="{% static 'CSS/index.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <!-- Using Django static for the logo image -->
+            <img src="{% static 'LOGO/logo.png' %}" alt="Logo" class="logo">
+            <div id="date-time" class="date-time"></div> <!-- Real-time date and time -->
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{% url 'about' %}" class="sidebar-link">About Us</a> <!-- Django URL tag for 'About Us' -->
+            <a href="{% url 'contact' %}" class="sidebar-link">Contact Us</a> <!-- Django URL tag for 'Contact Us' -->
+            <a href="{% url 'home' %}" class="sidebar-link">Log In</a> <!-- Django URL tag for 'Login' -->
+        </nav>
+    </div>
+
+    <!-- Hamburger Icon -->
+    <div class="hamburger" id="hamburger" onclick="toggleSidebar()">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="image-container" style="background-image: url('{% static 'LOGO/intro.jpg' %}');"></div>
+
+
+    <!-- Main content -->
+    <div class="homepage-container">
+        <header>
+            <h1>Welcome to IO/FoodHub Dalaguete</h1>
+            <p>Tap here to choose your profile to log-in!</p>
+        </header>
+        <main>
+            <!-- Using Django URL tag for home page -->
+            <button class="btn-primary" onclick="showSuccessAlert()" >
+                Get Started <!--<span class="arrow">&rarr;</span>-->
+            </button>
+        </main>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-left">
+            <p>&copy; FoodHub@<span id="current-year">{{ current_year }}</span> | 
+                <a href="#" onclick="openTerms()">Terms and Conditions</a>  | 
+                <a href="https://maps.app.goo.gl/4st9MsTfaLGGBBn68" target="_blank" id="location-link">Location</a>
+            </p>
+        </div>
+        <div class="footer-right">
+            <!-- Using Django static for social media icons -->
+            <a href="https://www.facebook.com/p/IO-Food-Hub-100093428663911/" class="social-icon">
+                <img src="{% static 'LOGO/facebook-icon.png' %}" alt="Facebook" class="icon">
+            </a>
+            <a href="https://www.instagram.com/iofoodhub?igsh=dzA4cGw2dDlydmll&fbclid=IwY2xjawGtepVleHRuA2FlbQIxMAABHRePbYEPOSJiEEUSIplEI_0VCMUkDczbDWredlwslbXjHo8YqkokQ4Qgzw_aem_KuovcCHYNjnly5ZHOk6xkw" target="_blank" class="social-icon">
+                <img src="{% static 'LOGO/instagram-icon.jpg' %}" alt="Instagram" class="icon">
+            </a>
+        </div>
+    </footer>
+
+    <!-- Modal Backdrop (Added missing div for backdrop) -->
+    <div class="modal-backdrop" id="modal-backdrop" onclick="closeTerms()"></div>
+
+    <!-- Terms and Conditions Modal -->
+    <div class="terms-modal" id="terms-modal">
+        <h2>Terms and Conditions</h2>
+        <p>Welcome to I/O FoodHub Dalaguete! By accessing and using our services, you agree to the following terms:</p>
+        <p><strong>1. User Agreement:</strong> By using our platform, you agree to use our services responsibly and for lawful purposes only...</p>
+        <!-- Modal content continues here... -->
+
+        <div>
+            <input type="checkbox" id="agree-checkbox"> 
+            <label for="agree-checkbox">I agree to the terms and conditions</label>
+        </div>
+
+        <!-- Close Button (initially disabled) -->
+        <button id="close-button" onclick="closeTerms()" disabled>I Agree</button>
+    </div>
+
+    <!-- Adding Django's static JS file for dynamic JS functionality -->
+    <script src="{% static 'index.js' %}"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Function to update real-time date and time
+        function updateDateTime() {
+            var now = new Date();
+            var hours = now.getHours().toString().padStart(2, '0');
+            var minutes = now.getMinutes().toString().padStart(2, '0');
+            var seconds = now.getSeconds().toString().padStart(2, '0');
+            var day = now.getDate().toString().padStart(2, '0');
+            var month = (now.getMonth() + 1).toString().padStart(2, '0'); // months are 0-based
+            var year = now.getFullYear();
+
+            var timeString = hours + ":" + minutes + ":" + seconds;
+            var dateString = day + "/" + month + "/" + year;
+
+            // Combine the date and time into one string
+            document.getElementById("date-time").textContent = dateString + " | " + timeString;
+        }
+
+        // Update the year in the footer dynamically
+        document.getElementById("current-year").textContent = new Date().getFullYear();
+
+        // Update the date and time every second
+        setInterval(updateDateTime, 1000);
+        updateDateTime(); // Call the function once to set the initial date and time
+
+        // Toggle the sidebar visibility when hamburger icon is clicked
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Function to open the modal
+        function openTerms() {
+            document.getElementById("modal-backdrop").style.display = "block";
+            document.getElementById("terms-modal").style.display = "block";
+        }
+
+        // Function to close the modal
+        function closeTerms() {
+            document.getElementById("modal-backdrop").style.display = "none";
+            document.getElementById("terms-modal").style.display = "none";
+        }
+
+        // Enable/Disable the 'Agree and Close' button based on checkbox state
+        document.getElementById('agree-checkbox').addEventListener('change', function() {
+            var button = document.getElementById('close-button');
+            if (this.checked) {
+                button.disabled = false;  // Enable the button
+            } else {
+                button.disabled = true;   // Disable the button
+            }
+        });
+
+        function showSuccessAlert() {
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Please wait while we redirect you.',
+                allowOutsideClick: false, // Prevent users from closing the alert
+                showConfirmButton: false, // No confirm button
+                didOpen: () => {
+                    Swal.showLoading(); // Show the loading spinner
+                }
+            });
+        
+            // Redirect after a delay (e.g., 2 seconds)
+            setTimeout(() => {
+                window.location.href = '{% url "home" %}'; // Redirect to 'home'
+            }, 500);
+        }
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REPORT LIST</title>
+    <link rel="stylesheet" href="{% static 'CSS/emp_records.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/reports.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="{% static 'JAVSCRIPT/order.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  <div class="main-wrapper">
+    <div class="container">
+      <div class="header">
+        <img src="{% static 'LOGO/logo.png' %}" alt="Food Hub Logo" class="logo">
+        <div class="nav-links">
+          <a href="{% url 'admin_graph' %}">HOME</a>
+          <a href="{% url 'about' %}">ABOUT</a>
+        </div>
+      </div>
+      <div class="sidebar">
+        <ul>
+          <img src="{% static 'LOGO/admin.png' %}" alt="admin Logo" class="logo">
+          <div class="logo-container">
+            <span id="current-date-time"></span>
+          </div>
+          <li><a href="{% url 'admin_graph' %}">DASHBOARD</a></li>
+          <li><a href="{% url 'inventory' %}">INVENTORY</a></li>
+          <li><a href="{% url 'emp_records' %}">EMPLOYEE</a></li>
+          <li><a href="{% url 'report_list' %}">REPORTS</a></li>
+          <li><a href="{% url 'log_in' %}" onclick="return confirmLogOut();" id="logout-link">LOGOUT</a></li>
+        </ul>
+      </div>
+    </div>
+    <h1>SUBMITTED REPORTS</h1>
+    <div class="containers">
+
+        {% if reports %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Submitted By</th>
+                        <th>Submitted At</th>
+                        <th>File</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                        <tr>
+                            <td>{{ report.title }}</td>
+                            <td>{{ report.description }}</td>
+                            <td>{{ report.submitted_by.username }}</td>
+                            <td>{{ report.submitted_at|date:"F j, Y, g:i a" }}</td>
+                            <td>
+                              {% if report.file %}
+                                  <a href="{{ report.file.url }}" onclick="confirmDownload(event, '{{ report.file.url }}')">Download</a>
+                              {% else %}
+                                  No file available
+                              {% endif %}
+                          </td>
+                          
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No reports have been submitted yet.</p>
+        {% endif %}
+    </div>
+
+<script>
+  function confirmLogOut() {
+    return confirm("Are you sure you want to logout?");
+  }
+
+  function confirmDownload(event, url) {
+    event.preventDefault(); // Prevents the default download action
+
+    Swal.fire({
+        title: 'Are you sure you want to download this file?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, download it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Proceed with the download
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = ''; // Trigger download with the original filename
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Show success message after download
+            Swal.fire({
+                title: 'File successfully downloaded!',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    });
+}
+
+
+  const dateTimeElement = document.getElementById('current-date-time');
+
+  function formatAMPM(date) {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    return `${hours}:${minutes} ${ampm}`;
+  }
+
+  function updateDateTime() {
+    const now = new Date();
+    const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+    const time = formatAMPM(now);
+    dateTimeElement.innerHTML = `${date} - ${time}`;
+  }
+
+  updateDateTime();
+</script>
+</body>
+</html>

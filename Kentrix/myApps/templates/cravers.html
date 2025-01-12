@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Hub</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'CSS/mango.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="main-wrapper">
+    <div class="container">
+      <div class="header">
+        <img src="{% static 'LOGO/logo.png' %}" alt="Food Hub Logo" class="logo">
+      </div>
+      <div class="sidebar">
+        <ul>
+          <img src="{% static 'LOGO/cravers.png' %}" alt="cravers_haven Logo" class="logo">
+          <div class="logo-container">
+            <span id="current-date-time"></span>
+          </div>
+          <li><a href="{% url 'monthly_total_sales' %}">DASHBOARD</a></li>
+          <li><a href="{% url 'cravers_haven' %}#process-order">ORDER</a></li>
+          <li><a href="{% url 'cravers' %}">TRANSACTION</a></li>
+          <li><a href="{% url 'log_in' %}" id="logout-link">LOGOUT</a></li>
+        </ul>
+      </div>
+    </div>
+    <h2>TRANSACTIONS</h2>
+    <div class="Main">
+      <table id="transaction-table">
+        <thead>
+          <tr>
+            <th>UBTransactID</th>
+            <th>OrderDate</th>
+            <th>Description</th>
+            <th>Size</th>
+            <th>Quantity</th>
+            <th>TotalPrice</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for transaction in transactions %}
+          <tr>
+            <td>{{ transaction.ubtransact_id }}</td>
+            <td>{{ transaction.order_date }}</td>
+            <td>{{ transaction.desc }}</td>
+            <td>{{ transaction.size }}</td>
+            <td>{{ transaction.quantity }}</td>
+            <td>{{ transaction.total_price }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="no-transactions">No transactions found</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script src="{% static 'JAVSCRIPT/script.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+    const dateTimeElement = document.getElementById('current-date-time');
+
+    function formatAMPM(date) {
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      const strTime = `${hours}:${minutes}${ampm}`;
+      return strTime;
+    }
+
+    function updateDateTime() {
+      const now = new Date();
+      const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+      const time = formatAMPM(now);
+      const dateTimeHTML = `${date} - ${time}`;
+      dateTimeElement.innerHTML = dateTimeHTML;
+
+      document.getElementById("date").value = dateTimeHTML;
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
+});
+document.addEventListener('DOMContentLoaded', (event) => {
+  window.scrollTo(0, document.getElementById('transaction-table').offsetTop);
+
+    });
+
+  </script>
+</body>
+</html>
