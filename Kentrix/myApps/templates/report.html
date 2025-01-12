@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Report</title>
+    <link rel="stylesheet" href="{% static 'CSS/mango.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Include SweetAlert -->
+    <style>
+        body {
+            font-family: 'Playfair Display', serif;
+            background-color: #f5dfc0;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container form {
+            width: 350px;
+            margin: 5px auto 10px; 
+            padding: 30px;
+            background-color: #fff;
+            box-shadow: 0 0 50px #964B00;
+            border-radius: 50px;
+            border-color: black;
+            margin-left: 20%;
+        }
+        
+        h1 {
+            margin-left: 170px;
+            margin-top: 10%;
+            font-size: 50px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: black; /* Ensure the label color is visible */
+        }
+        
+        .form-group input[type="text"],
+        .form-group textarea,
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f5dfc0;
+            border: 1px solid #000;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+        }
+        
+        .form-group button {
+            background-color: #a87449;
+            color: white;
+            padding: 15px 20px;
+            margin: 8px auto;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 50%;
+            opacity: 0.9;
+            display: block;
+        }
+        
+        .form-group button:hover {
+            background-color: #8a4600;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+            <img src="{% static 'LOGO/logo.png' %}" alt="Food Hub Logo" class="logo">
+        </div>
+        <div class="sidebar">
+            <ul>
+                <img src="{% static 'LOGO/mango.png' %}" alt="yummy_mango Logo" class="logo">
+                <div class="logo-container">
+                    <span id="current-date-time"></span>
+                </div>
+                <li><a href="{% url 'monthly_total_sales' %}">DASHBOARD</a></li>
+                <li><a href="{% url 'yummy_mango' %}#process-order">ORDER</a></li>
+                <li><a href="{% url 'transaction' %}">TRANSACTION</a></li>
+                <li><a href="{% url 'report' %}" class="active">REPORTS</a></li>
+                <li><a href="{% url 'log_in' %}" onclick="return confirmLogOut();" id="logout-link">LOGOUT</a></li> 
+            </ul>
+        </div>
+        <h1>SUBMIT A REPORT</h1>
+        <div class="container" alt="Report">  
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <form id="report-form" action="{% url 'report' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="title">Report Title:</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="file">Attach File:</label>
+                    <input type="file" id="file" name="file">
+                </div>
+                <div class="form-group">
+                    <button type="submit">Submit Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function confirmLogOut() {
+            return confirm("Are you sure you want to logout?");
+        }
+
+        const dateTimeElement = document.getElementById('current-date-time');
+
+        function formatAMPM(date) {
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            const strTime = `${hours}:${minutes}${ampm}`;
+            return strTime;
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+            const time = formatAMPM(now);
+            const dateTimeHTML = `${date} - ${time}`;
+            dateTimeElement.innerHTML = dateTimeHTML;
+        }
+
+        updateDateTime();
+
+        $(document).ready(function() {
+            $('#report-form').on('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+                const formData = new FormData(this); // Create FormData object
+        
+                $.ajax({
+                    url: '', // The same URL that the form is submitted to
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                $('#report-form')[0].reset(); // Reset the form after confirmation
+                            });
+                        } else {
+                            // Handle errors
+                            let errorMessage = 'Please correct the errors below:';
+                            $.each(response.errors, function(field, messages) {
+                                messages.forEach(function(message) {
+                                    errorMessage += `\n${field}: ${message}`;
+                                });
+                            });
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: errorMessage,
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'An error occurred while submitting the report.',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
+        });        
+    </script>
+</body>
+</html>

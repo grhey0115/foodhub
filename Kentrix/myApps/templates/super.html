@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Total Sales</title>
+    <link rel="stylesheet" href="{% static 'CSS/emp_records.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="{% static 'JAVSCRIPT/order.js' %}"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+    <style>
+    
+      .chart-container {
+        display: flex;
+        justify-content: space-between;
+        padding: 40px;
+        margin-left: 20%;
+    }
+
+    .chart {
+        width: 100%;
+        padding: 7px;
+        height: 800px;
+    }
+
+    canvas {
+        background-color: black;
+        height: 100%;
+        width: 100%;
+    }
+
+    h1 {
+        color: black;
+        text-align: center;
+        margin-top: 10%;
+        font-size: 60px;
+        margin-left: 20%;
+    }
+
+    body {
+        background-color: #f5dfc0;
+        font-family: 'Playfair Display', serif;
+    }
+
+
+      </style>
+  </head>
+<body>
+  <div class="main-wrapper">
+    <div class="container">
+      <div class="header">
+        <img src="{% static 'LOGO/logo.png' %}" alt="Food Hub Logo" class="logo">
+                <div class="nav-links">
+            <a href="{% url 'super' %}">HOME</a>
+            <a href="{% url 'about' %}">ABOUT</a>
+          </div>
+      </div>
+      <div class="sidebar">
+        <ul>
+          <img src="{% static 'LOGO/super.png' %}" alt="admin Logo" class="logo">
+          <div class="logo-container">
+            <span id="current-date-time"></span>
+          </div>
+          <li><a href="{% url 'super' %}">DASHBOARD</a></li>
+          <li><a href="{% url 'supreg' %}">ADMIN</a></li>
+          <li><a href="{% url 'log_in' %}" id="logout-link">LOGOUT</a></li>
+        </ul>
+      </div>
+    </div>
+    <h1>SALES DATA DASHBOARD</h1>
+<div class="chart-container">
+    <div class="chart">
+        <canvas id="annualSalesChart"></canvas>
+    </div>
+    <div class="chart">
+        <canvas id="monthlySalesChart"></canvas>
+    </div>
+</div>
+<script>
+    const dateTimeElement = document.getElementById('current-date-time');
+
+    function formatAMPM(date) {
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        const strTime = `${hours}:${minutes}${ampm}`;
+        return strTime;
+    }
+    
+    function updateDateTime() {
+        const now = new Date();
+        const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+        const time = formatAMPM(now);
+        const dateTimeHTML = `${date} - ${time}`;
+        dateTimeElement.innerHTML = dateTimeHTML;
+    
+        const dateElement = document.getElementById("date");
+        if (dateElement) {
+            dateElement.value = dateTimeHTML;
+        }
+    }
+
+    async function fetchSalesData() {
+      const response = await fetch("{% url 'sales_data' %}");
+      const data = await response.json();
+      return data;
+  }
+
+  function renderSalesChart(ctx, datasets, labels, title) {
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',  // Move legend to the bottom
+                    labels: {
+                        color: '#fff'   // Legend label color
+                    }
+                },
+                title: {
+                    display: true,
+                    text: title,
+                    color: '#fff',
+                    font: {
+                        size: 20
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Year/Month',
+                        color: '#fff'
+                    },
+                    ticks: {
+                        color: '#fff'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Sales Amount',
+                        color: '#fff'
+                    },
+                    ticks: {
+                        color: '#fff'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+  function generateDatasets(salesData, stallColors) {
+      return Object.keys(salesData).map(stall => ({
+          label: stall,
+          data: salesData[stall].sales,
+          borderColor: stallColors[stall],
+          borderWidth: 2,
+          fill: false,
+          tension: 0.1
+      }));
+  }
+
+  async function renderCharts() {
+      const salesData = await fetchSalesData();
+
+      // Updated stall names and colors
+      const stallColors = {
+        "Yummy Mango": "rgba(255, 165, 0, 1)",      // Orange
+        "Tusok-Tusok": "rgba(128, 0, 128, 1)",      // Purple
+        "Uncle Brew": "rgba(0, 0, 255, 1)",         // Blue
+        "Sealog & BBQ": "rgba(0, 255, 0, 1)",       // Green
+        "BJA Lechon": "rgba(255, 69, 0, 1)",        // Orange-Red
+        "Cravers Heaven": "rgba(255, 20, 147, 1)"   // Deep Pink 
+    };
+    
+
+      const monthlyDatasets = generateDatasets(salesData.monthly, stallColors);
+      const annualDatasets = generateDatasets(salesData.annual, stallColors);
+
+      const monthlyLabels = salesData.monthly[Object.keys(salesData.monthly)[0]].labels;
+      const annualLabels = salesData.annual[Object.keys(salesData.annual)[0]].labels;
+
+      const monthlyCtx = document.getElementById('monthlySalesChart').getContext('2d');
+      const annualCtx = document.getElementById('annualSalesChart').getContext('2d');
+
+      // Render monthly sales chart
+      renderSalesChart(monthlyCtx, monthlyDatasets, monthlyLabels, 'Monthly Sales of Different Stalls');
+
+      // Render annual sales chart
+      renderSalesChart(annualCtx, annualDatasets, annualLabels, 'Annual Sales of Different Stalls');
+  }
+
+  document.addEventListener('DOMContentLoaded', renderCharts);
+
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        updateDateTime();
+        window.scrollTo(0, document.getElementById('Monthly Sales Bar Graph').offsetTop);
+    });
+</script>
+</body>
+</html>

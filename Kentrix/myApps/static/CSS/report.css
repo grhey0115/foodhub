@@ -1,0 +1,111 @@
+body {
+    font-family: 'Playfair Display', serif;
+    background-color: #f5dfc0;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 50px #964B00;
+    border-radius: 10px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #000;
+    text-align: left;
+}
+
+th {
+    background-color: #a87449;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.messages {
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #d4edda; /* Light green background */
+    color: #155724; /* Dark green text */
+    border: 1px solid #c3e6cb; /* Light green border */
+    border-radius: 5px;
+    width: 80%; /* Adjust as needed */
+    text-align: center; /* Center the text */
+}
+
+.container form {
+    width: 350px;
+    margin: 5px auto 10px; 
+    padding: 30px;
+    background-color: #fff;
+    box-shadow: 0 0 50px #964B00;
+    border-radius: 50px;
+    border-color: black;
+    margin-left: 20%;
+}
+
+h1 {
+    margin-left: 170px;
+    margin-top: 10%;
+    font-size: 50px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: black; /* Ensure the label color is visible */
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f5dfc0;
+    border: 1px solid #000;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-group button {
+    background-color: #a87449;
+    color: white;
+    padding: 15px 20px;
+    margin: 8px auto;
+    border-radius: 50px;
+    cursor: pointer;
+    width: 50%;
+    opacity: 0.9;
+    display: block;
+}
+
+.form-group button:hover {
+    background-color: #8a4600;
+}

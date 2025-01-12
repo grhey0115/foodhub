@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN REGISTRATION</title>
+    <link rel="stylesheet" href="{% static 'CSS/super.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+    <style>
+        .form-container {
+            margin-top: 10%;
+            margin-left: 35%;
+        }
+    </style>
+</head>  
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+            <img src="{% static 'LOGO/logo.png' %}" alt="Food Hub Logo" class="logo">
+            <div class="nav-links">
+                <a href="{% url 'admin_graph' %}">HOME</a>
+                <a href="{% url 'about' %}">ABOUT</a>
+            </div>
+            <div class="sidebar">
+                <ul>
+                    <img src="{% static 'LOGO/super.png' %}" alt="SuperAdmin Logo" class="logo">
+                    <div class="logo-container">
+                        <span id="current-date-time"></span>
+                    </div>
+                    <li><a href="{% url 'super' %}">DASHBOARD</a></li>
+                    <li><a href="{% url 'supreg' %}">ADMINS</a></li>
+                    <li><a href="{% url 'log_in' %}" onclick="return confirmLogOut();" id="logout-link">LOGOUT</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="form-container">           
+            <form method="POST" action="{% url 'supreg' %}">
+                {% csrf_token %}
+                <div class="form-wrapper">
+                    <h2>ADMIN REGISTRATION</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="firstname">FIRSTNAME</label>
+                            <input type="text" id="firstname" name="firstname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="age">AGE</label>
+                            <input type="number" id="age" name="age" min="20" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="middle_initial">MIDDLE INITIAL</label>
+                            <input type="text" id="middle_initial" name="middle_initial" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="birthdate">BIRTHDATE</label>
+                            <input type="date" id="birthdate" name="birthdate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname">LASTNAME</label>
+                            <input type="text" id="lastname" name="lastname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">ADDRESS</label>
+                            <input type="text" id="address" name="address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">USERNAME</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact_number">PHONE NUMBER</label>
+                            <input type="text" id="contact_number" name="contact_number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">PASSWORD</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="stallname">STALLNAME</label>
+                            <select id="stallname" name="stallname">
+                                <option value="" disabled selected>Select a stall</option>
+                                <option value="Yummy Mango">Yummy Mango</option>
+                                <option value="Tusok-Tusok">Tusok-Tusok</option>
+                                <option value="Uncle Brew">Uncle Brew</option>
+                                <option value="Sealog & BBQ">Sealog & BBQ</option>
+                                <option value="BJA Lechon">BJA Lechon</option>
+                                <option value="Cravers Heaven">Cravers Heaven</option>
+                            </select>
+                        </div>                        
+                    </div>
+                    <button type="submit" class="submit-btn">Register Admin</button>
+                    <div class="button-container">
+                        <button type="button" class="btn-secondary" onclick="window.location.href='{% url 'adminrec' %}'">View Admin Records</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function confirmLogOut() {
+            return confirm("Are you sure you want to logout?");
+          }
+        const stallSelect = document.getElementById('stallname');
+        const selectedStallDiv = document.getElementById('selected-stall');
+
+        stallSelect.addEventListener('change', function() {
+            selectedStallDiv.textContent = `Selected Stall: ${stallSelect.value}`;
+        });
+
+        const dateTimeElement = document.getElementById('current-date-time');
+
+        function formatAMPM(date) {
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            const strTime = `${hours}:${minutes}${ampm}`;
+            return strTime;
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+            const time = formatAMPM(now);
+            const dateTimeHTML = `${date} - ${time}`;
+            dateTimeElement.innerHTML = dateTimeHTML;
+        }
+
+        updateDateTime();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            window.scrollTo(0, document.getElementById('form-container').offsetTop);
+        });
+    </script>
+</body>
+</html>

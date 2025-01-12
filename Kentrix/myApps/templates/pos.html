@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Hub</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'CSS/pos.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="main-wrapper">
+    <div class="container">
+      <div class="header">
+        <img src="{% static 'LOGO/logo.png' %}" alt="Food Hub Logo" class="logo">
+      </div>
+      <div class="sidebar">
+        <ul>
+          <img src="{% static 'LOGO/mango.png' %}" alt="yummy_mango Logo" class="logo">
+          <div class="logo-container">
+            <span id="current-date-time"></span>
+          </div>
+          <li><a href="{% url 'monthly_total_sales' %}">DASHBOARD</a></li>
+          <li><a href="{% url 'pos' %}">ORDER</a></li>
+          <li><a href="{% url 'transaction' %}">TRANSACTION</a></li>
+          <li><a href="{% url 'report' %}" class="active">REPORTS</a></li>
+          <li><a href="{% url 'log_in' %}" id="logout-link">LOGOUT</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="Main">
+        <div class="container">
+            <!-- Left Side: Order Summary -->
+            <div class="order-summary">
+                <h2>Quick Sale</h2>
+                <table id="order-summary-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Size</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-items">
+                        <!-- Dynamically populated with JavaScript when items are added to the order -->
+                    </tbody>
+                </table>
+    
+                <!-- Subtotal, Discount, Tax, Total Price -->
+                <div class="summary-totals">
+                    <p>Sub: <span id="subtotal">0.00</span></p>
+                    <p>Discount: <span id="discount">0.00</span></p>
+                    <p>Tax: <span id="tax">0.00</span></p>
+                    <p><strong>Total: <span id="total">0.00</span></strong></p>
+                </div>
+    
+                <!-- Payment -->
+                <div class="payment">
+                    <input type="text" id="cash-input" placeholder="Enter cash amount" />
+                    <button id="pay-button">Cash $<span id="cash-display">0.00</span></button>
+                </div>
+    
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button id="cancel-order">Cancel</button>
+                    <button id="save-order">Save</button>
+                    <button id="print-receipt">Reprint</button>
+                </div>
+            </div>
+    
+            <!-- Right Side: Menu Grid -->
+            <div class="menu">
+                <h2>Select Items</h2>
+                <div class="menu-grid">
+                    <form method="POST" action="{% url 'pos' %}">
+                        {% csrf_token %}
+                        {% for item in menu_items %}
+                            <div class="menu-item">
+                                <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                                <p>{{ item.name }}</p>
+                                <p>${{ item.price }}</p>
+    
+                                <!-- Size selection -->
+                                <select name="size">
+                                    <option value="Small">Small</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Large">Large</option>
+                                </select>
+    
+                                <!-- Quantity input -->
+                                <input type="number" name="quantity" min="1" value="1">
+    
+                                <!-- Hidden input for item ID -->
+                                <input type="hidden" name="item_id" value="{{ item.id }}">
+    
+                                <!-- Description input (optional) -->
+                                <input type="text" name="description" placeholder="Enter description (optional)">
+    
+                                <!-- Add to Order button -->
+                                <button type="submit">Add to Order</button>
+                            </div>
+                        {% endfor %}
+                    </form>
+                </div>
+            </div>
+        </div> 
+    </div>
+  </div>
+  <script src="{% static 'JAVSCRIPT/script.js' %}"></script>
+  <script>
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+    const dateTimeElement = document.getElementById('current-date-time');
+
+    function formatAMPM(date) {
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      const strTime = `${hours}:${minutes}${ampm}`;
+      return strTime;
+    }
+
+    function updateDateTime() {
+      const now = new Date();
+      const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+      const time = formatAMPM(now);
+      const dateTimeHTML = `${date} - ${time}`;
+      dateTimeElement.innerHTML = dateTimeHTML;
+
+      document.getElementById("date").value = dateTimeHTML;
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
+});
+document.addEventListener('DOMContentLoaded', (event) => {
+  window.scrollTo(0, document.getElementById('transaction-table').offsetTop);
+
+    });
+
+  </script>
+</body>
+</html>
