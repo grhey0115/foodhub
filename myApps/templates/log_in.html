@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Hub</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'CSS/logins.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div class="showcase">
+    <div class="video-container">
+      <video src="{% static 'LOGO/fvid.mp4' %}" autoplay muted loop></video>
+    </div>
+  </div>
+  <main> 
+    <div class="box">
+      <div class="inner-box">
+        <div class="forms-wrap">
+          <!-- Form start -->
+          <form method="post">
+            {% csrf_token %}
+
+            <div class="logo">
+              <a href="{% url 'home' %}">
+                <img src="{% static 'LOGO/logo.png' %}" alt="foodhub" />
+            </a>            
+              <h4>IO/FOOD HUB</h4>
+            </div>
+            <form method="POST" action="{% url 'log_in' %}">
+              {% csrf_token %}
+              <!-- Hidden field to distinguish between employee and admin/super admin -->
+              <input type="hidden" name="user_type" value="{{ user_type }}">
+          
+              <div class="actual-form">
+                  {% if user_type == "employee" %}
+                  <!-- For employees: email_address -->
+                  <div class="form-group">
+                      <label for="email_address">EMAIL ADDRESS:</label>
+                      <input type="email" 
+                             minlength="6"
+                             class="input-field"  
+                             autocomplete="off"
+                             required 
+                             placeholder="Enter Email" 
+                             id="email_address" 
+                             name="email_address" 
+                             value="{{ email_address|default:'' }}">
+                  </div>
+                  {% else %}
+                  <!-- For admin/super admin: username -->
+                  <div class="form-group">
+                      <label for="username">USERNAME:</label>
+                      <input type="text" 
+                             class="input-field"
+                             autocomplete="off"
+                             required 
+                             placeholder="Enter Username" 
+                             id="username" 
+                             name="username" 
+                             value="{{ username|default:'' }}">
+                  </div>
+                  {% endif %}
+          
+                  <div class="form-group">
+                      <label for="password">PASSWORD:</label>
+                      <input type="password" 
+                             minlength="6"
+                             class="input-field"
+                             autocomplete="new-password"
+                             required 
+                             placeholder="Enter Password" 
+                             id="password" 
+                             name="password">
+                  </div>
+          
+                  <a href="{% url 'forgot_password' %}" class="forgot-password-link">Forgot Password?</a>
+          
+                  <button type="submit" class="btn">LOGIN</button>
+              </div>
+          </form>
+          
+          <!-- Form end -->
+          {% for message in messages %}
+          <script>
+              {% if message.tags == 'error' %}
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Login Failed',
+                      text: "{{ message|escapejs }}",
+                      confirmButtonText: 'Try Again',
+                      allowOutsideClick: false
+                  });
+              {% elif message.tags == 'success' %}
+                  Swal.fire({
+                      icon: 'success',
+                      title: 'Login Successful',
+                      text: "{{ message|escapejs }}",
+                      timer: 2000,
+                      timerProgressBar: true,
+                      showConfirmButton: false,
+                      allowOutsideClick: false,
+                      didOpen: () => {
+                          Swal.showLoading();
+                      },
+                      willClose: () => {
+                          // Delay the redirection slightly
+                          setTimeout(() => {
+                              window.location.href = "{{ next_url|default:'admin_graph' }}";
+                          }, 200); 
+                      }
+                  });
+              {% endif %}
+          </script>
+      {% endfor %}
+      
+          
+          
+          <!-- Carousel Section -->
+          <div class="carousel">
+            <div class="images-wrapper">
+              <!-- Load static images -->
+              <img src="{% static 'LOGO/mango.png' %}" class="image img-1 show" alt="" />
+              <img src="{% static 'LOGO/tusok.png' %}" class="image img-2" alt="" />
+              <img src="{% static 'LOGO/logo.png' %}" class="image img-3" alt="" />
+            </div>
+
+            <div class="text-slider">
+              <div class="text-wrap">
+                <div class="text-group">
+                  <h2>Savour the Sweetness of Mango</h2>
+                  <h2>Just like the old days!</h2>
+                  <h2>AVAILABLE IN I/O FOOD HUB</h2>
+                </div>
+              </div>
+
+              <div class="bullets">
+                <span class="active" data-value="1"></span>
+                <span data-value="2"></span>
+                <span data-value="3"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    const inputs = document.querySelectorAll(".input-field");
+    const toggle_btn = document.querySelectorAll(".toggle");
+    const main = document.querySelector("main");
+    const bullets = document.querySelectorAll(".bullets span");
+    const images = document.querySelectorAll(".image");
+
+    inputs.forEach((inp) => {
+      inp.addEventListener("focus", () => {
+        inp.classList.add("active");
+      });
+      inp.addEventListener("blur", () => {
+        if (inp.value != "") return;
+        inp.classList.remove("active");
+      });
+    });
+
+    toggle_btn.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        main.classList.toggle("sign-up-mode");
+      });
+    });
+
+    function moveSlider(index) {
+      let currentImage = document.querySelector(`.img-${index}`);
+      images.forEach((img) => img.classList.remove("show"));
+      currentImage.classList.add("show");
+
+      const textSlider = document.querySelector(".text-group");
+      textSlider.style.transform = `translateY(${-(index - 1) * 2.2}rem)`;
+
+      bullets.forEach((bull) => bull.classList.remove("active"));
+      bullets[index - 1].classList.add("active");
+    }
+
+    // Adding click functionality to bullets
+    bullets.forEach((bullet) => {
+      bullet.addEventListener("click", function () {
+        moveSlider(this.dataset.value);
+        clearInterval(autoSlide); // Stop auto-slide on manual interaction
+        startAutoSlide(); // Restart the auto-slide timer
+      });
+    });
+
+    // Automatic Slideshow
+    let currentSlide = 1;
+    const totalSlides = images.length;
+    let autoSlide;
+
+    function startAutoSlide() {
+      autoSlide = setInterval(() => {
+        currentSlide = (currentSlide % totalSlides) + 1; // Cycle through slides
+        moveSlider(currentSlide);
+      }, 2000); // Change slide every 3 seconds
+    }
+
+    // Start the slideshow
+    startAutoSlide();
+
+  </script>
+</body>
+</html>

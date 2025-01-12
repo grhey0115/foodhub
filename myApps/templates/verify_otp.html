@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Food Hub</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'CSS/LOGIN.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <a href="{% url 'home' %}">
+        <img src="{% static 'LOGO/logo.png' %}" alt="Logo">
+      </a>
+    </div>
+  </div>
+  <h1>Verify OTP</h1>
+<form method="post">
+  {% csrf_token %}
+  <label for="otp">Enter OTP:</label>
+  <input type="text" name="otp" id="otp" required>
+  <button type="submit">Verify OTP</button>
+  {% if error_message %}
+    <p style="color: red;">{{ error_message }}</p>
+  {% endif %}
+</form>
+  </div>
+</div>
+</body>
+</html>

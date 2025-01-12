@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+
+    <!-- CSS Links -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'CSS/fooditem.css' %}">
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="main-wrapper">
+        <div class="sidebar">
+            <!-- Sidebar content here -->
+        </div>
+
+        <div class="container">
+            <div class="header">
+                <h1>Edit Product</h1>
+            </div>
+
+            {% if success_message %}
+            <script>
+                Swal.fire({
+                    title: 'Success!',
+                    text: '{{ success_message }}',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect to food_and_supplier_items.html after success
+                        window.location.href = "{% url 'food_and_supplier_items' %}";
+                    }
+                });
+            </script>
+            {% endif %}
+
+            <form method="POST" action="{% url 'update_product' product.id %}">
+                {% csrf_token %}
+                <label for="product_name">Product Name:</label>
+                <input type="text" name="product_name" id="product_name" value="{{ product.product_name }}" required>
+
+                <label for="quantity">Quantity:</label>
+                <input type="number" name="quantity" id="quantity" value="{{ product.quantity }}" required>
+
+                <label for="price">Price:</label>
+                <input type="number" name="price" id="price" value="{{ product.price }}" required>
+
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
